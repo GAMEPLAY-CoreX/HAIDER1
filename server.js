@@ -128,7 +128,7 @@ io.on('connection', (socket) => {
 
       const players = await db.getSessionPlayers(sessionId);
 
-      const TOTAL_ROUNDS = 25;
+      const TOTAL_ROUNDS = 10;
       io.to(sessionId).emit('auctionEnded', {
         letter: auction.letter,
         price: auction.highestBid,
@@ -197,7 +197,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
