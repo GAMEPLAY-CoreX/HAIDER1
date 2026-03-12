@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأحرف المجمعة</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📄 الأحرف التي حصلت عليها</h1>
+        <div id="letters-list" class="letters-display"></div>
+        <button id="clear-btn">🗑️ مسح الأحرف</button>
+        <button id="back-home">↩️ العودة للعبة</button>
+    </div>
+
+    <script>
+        function renderLetters() {
+            const lettersDiv = document.getElementById('letters-list');
+            const stored = localStorage.getItem('myLetters') || '';
+            lettersDiv.textContent = stored || 'لم يتم جمع أي أحرف بعد.';
+        }
+
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            if (confirm('هل تريد مسح الأحرف من التخزين المحلي؟')) {
+                localStorage.removeItem('myLetters');
+                renderLetters();
+            }
+        });
+
+        document.getElementById('back-home').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+
+        renderLetters();
+    </script>
+</body>
+</html>

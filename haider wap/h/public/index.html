@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>꧁𓊈𒆜لـعـبـة مـزاد الأحـرف𒆜𓊉꧂ </title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+            <div class="corex-logo">
+                <div class="corex-ring"></div>
+                <div class="corex-text">
+                    <span class="core">Core</span><span class="c-x">X</span>
+                </div>
+            </div>
+        </div>
+        <h1>🎯 لعبة مزاد الأحرف 🎯</h1>
+
+        <div id="main-menu">
+            <div class="menu-buttons">
+                <button id="show-join-btn" class="big-btn">📍 انضم برقم جلسة</button>
+                <button id="show-create-btn" class="big-btn">✨ أنشئ لعبة جديدة</button>
+            </div>
+        </div>
+        <!-- تظهر بعد إنشاء اللعبة لعرض رقم الجلسة ونسخه -->
+        <div id="game-created" class="hidden">
+            <h2>تم إنشاء اللعبة</h2>
+            <p>رقم الجلسة: <span id="session-display"></span></p>
+            <p id="money-limit-display"></p>
+            <button id="copy-btn">📋 نسخ الرقم</button>
+            <button id="show-menu-btn">↩️ القائمة الرئيسية</button>
+        </div>
+        <div id="setup" class="hidden">
+            <h2>انضم إلى لعبة</h2>
+            <input type="text" id="sessionInput" placeholder="رقم الجلسة" />
+            <input type="text" id="player-name" placeholder="اسمك" />
+            <button id="join-btn">انضم</button>
+            <button id="back-btn">← رجوع</button>
+        </div>
+
+        <div id="setup-create" class="hidden">
+            <h2>أنشئ لعبة جديدة</h2>
+            <p style="margin-bottom: 15px; color: #ff0;">أدخل أسماء اللاعبين (2-10):</p>
+            <input type="text" id="players-input" placeholder="أحمد، علي، هند، محمد" />
+            <p style="margin:10px 0; color:#ff0;">الحد الأقصى للفلوس (د.ع)</p>
+            <input type="number" id="initial-money-input" placeholder="1000" />
+            <button id="create-btn">أنشئ اللعبة</button>
+            <button id="back-btn2">← رجوع</button>
+        </div>
+
+        <div id="auction-phase" class="hidden">
+            <button id="show-letters-btn" class="small-btn" style="position:absolute;top:10px;left:10px;">📄 أحرفي المجمعة</button>
+            <button id="start-auction-btn" class="big-btn hidden" style="position:absolute;top:10px;right:10px;">🎯 ابدأ المزاد</button>
+            <div class="auction-container">
+                <div class="letter-display">
+                    <div id="current-letter">الحرف</div>
+                </div>
+
+                <div class="auction-info">
+                    <h3>السعر الحالي</h3>
+                    <div id="current-price">0</div>
+                    <div id="highest-bidder"></div>
+                    <div id="auction-timer" class="timer">20</div>
+                </div>
+
+                <div class="players-money">
+                    <h3>أموال اللاعبين</h3>
+                    <div id="players-list"></div>
+                </div>
+
+                <div class="bid-controls">
+                    <input type="number" id="bid-amount" placeholder="ادخل السعر" />
+                    <button id="place-bid-btn">ارفع السعر</button>
+                    <button id="end-auction-btn">انهي المزادة</button>
+                </div>
+
+                <div id="auction-log"></div>
+            </div>
+        </div>
+
+        <div id="word-phase" class="hidden">
+            <button id="show-letters-btn-2" class="small-btn" style="position:absolute;top:10px;left:10px;">📄 أحرفي المجمعة</button>
+            <div class="word-container">
+                <h2>مرحلة تشكيل الكلمات</h2>
+                <h3>كل كلمة تمنحك نقاطاً (طول الكلمة). من يحقق أعلى نقاط يفوز!</h3>
+
+                <div id="player-status"></div>
+
+                <div class="word-input-section">
+                    <h3>كلماتك:</h3>
+                    <div id="my-words" class="words-display"></div>
+                    <input type="text" id="word-input" placeholder="ادخل كلمة" />
+                    <button id="form-word-btn">تشكيل كلمة</button>
+                </div>
+
+                <div id="words-log"></div>
+            </div>
+        </div>
+
+        <div id="game-over" class="hidden">
+            <div class="results-container">
+                <h2 id="winner-message"></h2>
+                <button id="new-game-btn">لعبة جديدة</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stars"></div>
+    <script src="script.js"></script>
+    <!-- page for viewing collected letters -->
+    <!-- no extra scripts needed here -->
+</body>
+
+</html>

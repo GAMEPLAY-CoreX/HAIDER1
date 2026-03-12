@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "تشغيل لعبة مزاد الأحرف",
+      "type": "shell",
+      "command": "node",
+      "args": ["server.js"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true
+      },
+      "isBackground": false
+    }
+  ]
+}
