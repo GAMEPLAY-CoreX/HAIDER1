@@ -44,6 +44,7 @@ const backBtn2 = document.getElementById('back-btn2');
 const copyBtn = document.getElementById('copy-btn');
 const showMenuBtn = document.getElementById('show-menu-btn');
 const startAuctionBtn = document.getElementById('start-auction-btn');
+const endGameBtn = document.getElementById('end-game-btn');
 const sessionDisplay = document.getElementById('session-display');
 
 const sessionInput = document.getElementById('sessionInput');
@@ -265,6 +266,9 @@ socket.on('startWordPhase', () => {
   auctionPhaseDiv.classList.add('hidden');
   wordPhaseDiv.classList.remove('hidden');
   updatePlayerStatus();
+  if (isOwner && endGameBtn) {
+    endGameBtn.classList.remove('hidden');
+  }
 });
 
 socket.on('wordFormed', (data) => {
@@ -287,9 +291,8 @@ socket.on('wordFormed', (data) => {
 });
 
 socket.on('gameOver', (data) => {
-  wordPhaseDiv.classList.add('hidden');
-  gameOverDiv.classList.remove('hidden');
-  winnerMessageDiv.textContent = data.message;
+  // Instead of showing a div, redirect to leaderboard
+  window.location.href = `leaderboar.html?sessionId=${sessionId}`;
 });
 
 socket.on('error', (msg) => {
@@ -321,6 +324,14 @@ formWordBtn.addEventListener('click', () => {
   socket.emit('formWord', { sessionId, playerName, word });
   wordInput.value = '';
 });
+
+// End Game
+if (endGameBtn) {
+  endGameBtn.addEventListener('click', () => {
+    if (!confirm('هل أنت متأكد من إنهاء اللعبة للجميع؟')) return;
+    socket.emit('endGameRequest', { sessionId });
+  });
+}
 
 // New Game
 newGameBtn.addEventListener('click', () => {

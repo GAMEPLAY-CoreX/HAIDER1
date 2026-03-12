@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الأحرف المجمعة</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <h1>📄 الأحرف التي حصلت عليها</h1>
         <div id="letters-list" class="letters-display"></div>
+        <div class="stats" style="text-align: center; margin: 15px 0; color: #888;">
+            عدد الأحرف: <span id="letter-count" style="color: #0ff; font-weight: bold;">0</span>
+        </div>
         <button id="clear-btn">🗑️ مسح الأحرف</button>
         <button id="back-home">↩️ العودة للعبة</button>
     </div>
@@ -17,9 +22,35 @@
     <script>
         function renderLetters() {
             const lettersDiv = document.getElementById('letters-list');
+            const countSpan = document.getElementById('letter-count');
             const stored = localStorage.getItem('myLetters') || '';
-            lettersDiv.textContent = stored || 'لم يتم جمع أي أحرف بعد.';
+
+            if (!stored) {
+                lettersDiv.innerHTML = '<p style="font-size: 1.2rem; color: #555;">لم يتم جمع أي أحرف بعد.</p>';
+                countSpan.textContent = '0';
+                return;
+            }
+
+            lettersDiv.innerHTML = '';
+            const letters = stored.split('');
+            letters.forEach((char, index) => {
+                const chip = document.createElement('span');
+                chip.className = 'word-chip';
+                chip.textContent = char;
+                chip.style.animationDelay = `${index * 0.05}s`;
+                lettersDiv.appendChild(chip);
+            });
+
+            countSpan.textContent = letters.length;
         }
+
+        // Listen for changes in localStorage from other tabs (the game tab)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'myLetters') {
+                renderLetters();
+                // Optional: Add a subtle sound or visual notification
+            }
+        });
 
         document.getElementById('clear-btn').addEventListener('click', () => {
             if (confirm('هل تريد مسح الأحرف من التخزين المحلي؟')) {
@@ -35,4 +66,5 @@
         renderLetters();
     </script>
 </body>
+
 </html>

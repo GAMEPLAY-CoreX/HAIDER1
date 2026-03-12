@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة الصدارة - مـزاد الأحـرف</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            overflow: hidden;
+            color: white;
+        }
+
+        .leaderboard-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .winner-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.2); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        .winner-name {
+            color: #ffd700;
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .winner-label {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        .leaderboard-table th {
+            text-align: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1.2rem;
+        }
+
+        .rank {
+            width: 80px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .player-name {
+            text-align: right;
+        }
+
+        .score {
+            text-align: center;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .home-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2);
+            width: 100%;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 242, 254, 0.3);
+            filter: brightness(1.1);
+        }
+
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="stars"></div>
+
+    <div class="leaderboard-container">
+        <h1>🏆 النتائج النهائية 🏆</h1>
+        
+        <div id="winner-display" class="winner-card" style="display: none;">
+            <span class="winner-label">🏆 المركز الأول 🏆</span>
+            <span id="top-player-name" class="winner-name">---</span>
+            <span id="top-player-score" style="color: #fff; font-size: 1.4rem; font-weight: bold;">--- نقطة</span>
+        </div>
+
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>الترتيب</th>
+                    <th style="text-align: right;">اللاعب</th>
+                    <th>النقاط</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+
+        <button class="home-btn" onclick="window.location.href='index.html'">↩️ العودة للقائمة الرئيسية</button>
+    </div>
+
+    <script>
+        // Star background animation
+        function createStars() {
+            const stars = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.background = '#fff';
+                star.style.borderRadius = '50%';
+                star.style.opacity = Math.random();
+                star.style.animation = `twinkle ${Math.random() * 5 + 2}s infinite`;
+                stars.appendChild(star);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.3; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        createStars();
+
+        // Fetch Leaderboard Data
+        async function loadLeaderboard() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('sessionId');
+
+            if (!sessionId) {
+                document.querySelector('.leaderboard-container').innerHTML = '<h1>خطأ: لم يتم العثور على الجلسة</h1><button class="home-btn" onclick="window.location.href=\'index.html\'">العودة للرئيسية</button>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/leaderboard/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.players && data.players.length > 0) {
+                    const players = data.players;
+                    
+                    // Show top winner
+                    const topPlayer = players[0];
+                    document.getElementById('winner-display').style.display = 'block';
+                    document.getElementById('top-player-name').textContent = topPlayer.name;
+                    document.getElementById('top-player-score').textContent = `${topPlayer.score || 0} نقطة`;
+
+                    // Fill table
+                    const tbody = document.getElementById('leaderboard-body');
+                    tbody.innerHTML = '';
+                    
+                    players.forEach((player, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="rank">${index + 1}</td>
+                            <td class="player-name">${player.name}</td>
+                            <td class="score">${player.score || 0}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                     document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="3">لا توجد بيانات متاحة</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching leaderboard:', error);
+                document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="3">خطأ في جلب البيانات</td></tr>';
+            }
+        }
+
+        loadLeaderboard();
+    </script>
+</body>
+</html>

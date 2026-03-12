@@ -26,6 +26,19 @@ app.post('/api/game', async (req, res) => {
   }
 });
 
+app.get('/api/leaderboard/:sessionId', async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const players = await db.getSessionPlayers(sessionId);
+    // Sort players by score descending
+    players.sort((a, b) => (b.score || 0) - (a.score || 0));
+    res.json({ players });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
+  }
+});
+
 // Game state variables stored in memory for active sessions
 const sessions = {};
 const ARABIC_LETTERS = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split('');
@@ -190,9 +203,17 @@ io.on('connection', (socket) => {
         playerScore: newScore
       });
 
+      io.to(sessionId).emit('gameOver', { message: 'انتهت اللعبة! شكراً للجميع.' });
+
     } catch (err) {
       console.error(err);
       socket.emit('error', 'Failed to form word');
+    }
+  });
+
+  socket.on('endGameRequest', async ({ sessionId }) => {
+    if (sessions[sessionId] && sessions[sessionId].owner) {
+      io.to(sessionId).emit('gameOver', { message: 'انتهت اللعبة! سيتم تحويلكم لنتائج اللعبة.' });
     }
   });
 });
