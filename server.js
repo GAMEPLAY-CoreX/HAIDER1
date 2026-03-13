@@ -49,6 +49,7 @@ app.get('/api/leaderboard/:sessionId', async (req, res) => {
 // Game state variables stored in memory for active sessions
 const sessions = {};
 const ARABIC_LETTERS = "ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split('');
+const TOTAL_ROUNDS = 10;
 
 io.on('connection', (socket) => {
   socket.on('join', async ({ sessionId, playerName }) => {
@@ -87,6 +88,10 @@ io.on('connection', (socket) => {
 
   socket.on('startAuction', async ({ sessionId }) => {
     if (!sessions[sessionId]) return;
+
+    if (sessions[sessionId].auctionCount >= TOTAL_ROUNDS) {
+      return socket.emit('error', 'وصلت اللعبة إلى الحد الأقصى للمزادات (10)');
+    }
 
     const letter = ARABIC_LETTERS[Math.floor(Math.random() * ARABIC_LETTERS.length)];
     sessions[sessionId].currentAuction = {
@@ -148,7 +153,6 @@ io.on('connection', (socket) => {
 
       const players = await db.getSessionPlayers(sessionId);
 
-      const TOTAL_ROUNDS = 10;
       io.to(sessionId).emit('auctionEnded', {
         letter: auction.letter,
         price: auction.highestBid,
@@ -163,6 +167,11 @@ io.on('connection', (socket) => {
         currentAuction: null,
         wordPhase: session.wordPhase
       });
+
+      if (session.auctionCount >= TOTAL_ROUNDS) {
+        session.wordPhase = true;
+        io.to(sessionId).emit('startWordPhase');
+      }
 
       session.currentAuction = null;
     } catch (err) {
@@ -209,8 +218,6 @@ io.on('connection', (socket) => {
         playerLetters: remainingLetters,
         playerScore: newScore
       });
-
-      io.to(sessionId).emit('gameOver', { message: 'انتهت اللعبة! شكراً للجميع.' });
 
     } catch (err) {
       console.error(err);

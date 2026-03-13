@@ -20,7 +20,7 @@ body {
   padding: 20px;
   max-width: 1000px;
   margin: 20px auto;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 8px;
   box-shadow: 0 0 30px #00f;
   border: 2px solid #00f;
@@ -78,18 +78,39 @@ h1 {
 }
 
 @keyframes glow-img {
-  0%, 100% { box-shadow: 0 0 20px #0ff, 0 0 40px #005; }
-  50% { box-shadow: 0 0 40px #0ff, 0 0 60px #00f; }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px #0ff, 0 0 40px #005;
+  }
+
+  50% {
+    box-shadow: 0 0 40px #0ff, 0 0 60px #00f;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes glow {
-  0%, 100% { text-shadow: 0 0 20px #0ff, 0 0 40px #005, 0 0 60px #0099ff; }
-  50% { text-shadow: 0 0 30px #0ff, 0 0 50px #00f, 0 0 80px #0099ff; }
+
+  0%,
+  100% {
+    text-shadow: 0 0 20px #0ff, 0 0 40px #005, 0 0 60px #0099ff;
+  }
+
+  50% {
+    text-shadow: 0 0 30px #0ff, 0 0 50px #00f, 0 0 80px #0099ff;
+  }
 }
 
 h2 {
@@ -102,7 +123,8 @@ h3 {
   text-shadow: 0 0 5px #ff0;
 }
 
-input, button {
+input,
+button {
   padding: 12px 20px;
   margin: 10px;
   border-radius: 6px;
@@ -130,8 +152,10 @@ button {
 button::before {
   content: '';
   position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background: linear-gradient(transparent, rgba(0, 255, 255, 0.2), transparent);
   transform: rotate(45deg);
   transition: 0.5s;
@@ -177,8 +201,13 @@ input:focus {
 }
 
 @keyframes glow-btn {
-  from { box-shadow: 0 0 10px #0ff, inset 0 0 10px rgba(0,255,255,0.5); }
-  to { box-shadow: 0 0 25px #0ff, inset 0 0 20px rgba(0,255,255,0.8); }
+  from {
+    box-shadow: 0 0 10px #0ff, inset 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+
+  to {
+    box-shadow: 0 0 25px #0ff, inset 0 0 20px rgba(0, 255, 255, 0.8);
+  }
 }
 
 .big-btn:hover {
@@ -273,7 +302,8 @@ input:focus {
 }
 
 /* Setup Phase */
-#setup, #setup-create {
+#setup,
+#setup-create {
   text-align: center;
   padding: 30px;
   background: linear-gradient(45deg, rgba(20, 0, 40, 0.7), rgba(40, 0, 80, 0.7));
@@ -285,21 +315,36 @@ input:focus {
   overflow: hidden;
 }
 
-#setup::before, #setup-create::before {
+#setup::before,
+#setup-create::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 2px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
   background: linear-gradient(90deg, transparent, #f0f, transparent);
   animation: scanline 2s linear infinite;
 }
 
 @keyframes scanline {
-  0% { transform: translateY(-100%); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
 }
 
-#setup p, #setup-create p {
+#setup p,
+#setup-create p {
   font-size: 1.2rem;
   margin-bottom: 15px;
   color: #fff;
@@ -380,7 +425,7 @@ input:focus {
   margin: 8px;
   border-radius: 6px;
   border-left: 4px solid #0f0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   font-weight: bold;
   transition: transform 0.2s;
 }
@@ -510,7 +555,7 @@ input:focus {
   margin: 20px 0;
   min-height: 50px;
   padding: 15px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 8px;
   border: 1px inset #555;
 }
@@ -542,6 +587,35 @@ input:focus {
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
   text-shadow: 0 0 5px #fff;
   animation: slideIn 0.3s ease-out, float 3s ease-in-out infinite;
+}
+
+.letters-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+  padding: 15px;
+  margin: 20px 0;
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  min-height: 50px;
+  flex-wrap: wrap;
+}
+
+.strip-letter {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+  position: relative;
+}
+
+.strip-letter:not(:last-child)::after {
+  content: "|";
+  margin-left: 15px;
+  color: rgba(0, 255, 255, 0.3);
+  text-shadow: none;
 }
 
 #word-input {
@@ -607,14 +681,19 @@ input:focus {
 .results-container::after {
   content: '';
   position: absolute;
-  top: -50%; left: -50%; width: 200%; height: 200%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background: conic-gradient(transparent, rgba(255, 0, 255, 0.3), transparent 30%);
   animation: rotate 4s linear infinite;
   z-index: -1;
 }
 
 @keyframes rotate {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 #winner-message {
@@ -644,9 +723,17 @@ input:focus {
 
 /* Animations */
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes slideIn {
@@ -654,6 +741,7 @@ input:focus {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -661,14 +749,20 @@ input:focus {
 }
 
 @keyframes star-move {
-  from {transform: translateY(0);} 
-  to {transform: translateY(-100%);} 
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-100%);
+  }
 }
 
 #stars::after {
   content: "";
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 200%;
   height: 200%;
   background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><circle cx="10" cy="10" r="1" fill="white"/><circle cx="50" cy="80" r="1" fill="white"/><circle cx="120" cy="20" r="1" fill="white"/><circle cx="170" cy="150" r="1" fill="white"/><circle cx="90" cy="110" r="1" fill="white"/><circle cx="30" cy="150" r="1" fill="white"/><circle cx="180" cy="90" r="1" fill="white"/><circle cx="60" cy="30" r="1" fill="white"/><circle cx="150" cy="60" r="1" fill="white"/></svg>') repeat;
@@ -724,7 +818,10 @@ input:focus {
 .corex-ring::before {
   content: '';
   position: absolute;
-  top: -15px; left: -15px; right: -15px; bottom: -15px;
+  top: -15px;
+  left: -15px;
+  right: -15px;
+  bottom: -15px;
   border-radius: 50%;
   border: 2px dashed rgba(0, 150, 255, 0.6);
   animation: spinRingReverse 12s linear infinite;
@@ -733,7 +830,10 @@ input:focus {
 .corex-ring::after {
   content: '';
   position: absolute;
-  top: -30px; left: -30px; right: -30px; bottom: -30px;
+  top: -30px;
+  left: -30px;
+  right: -30px;
+  bottom: -30px;
   border-radius: 50%;
   box-shadow: 0 0 50px rgba(0, 50, 255, 0.3);
 }
@@ -768,13 +868,23 @@ input:focus {
 }
 
 @keyframes spinRing {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes spinRingReverse {
-  0% { transform: rotate(360deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(360deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 /* Responsive */
@@ -782,11 +892,11 @@ input:focus {
   h1 {
     font-size: 1.8rem;
   }
-  
+
   #current-letter {
     font-size: 3.5rem;
   }
-  
+
   .container {
     max-width: 100%;
     margin: 10px;

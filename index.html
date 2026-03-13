@@ -54,8 +54,9 @@
         </div>
 
         <div id="auction-phase" class="hidden">
-            <button id="show-letters-btn" class="small-btn" style="position:absolute;top:10px;left:10px;">📄 أحرفي المجمعة</button>
-            <button id="start-auction-btn" class="big-btn hidden" style="position:absolute;top:10px;right:10px;">🎯 ابدأ المزاد</button>
+            <button id="start-auction-btn" class="big-btn hidden" style="position:absolute;top:10px;right:10px;">🎯 ابدأ
+                المزاد</button>
+            <div id="letters-strip-auction" class="letters-strip"></div>
             <div class="auction-container">
                 <div class="letter-display">
                     <div id="current-letter">الحرف</div>
@@ -84,7 +85,7 @@
         </div>
 
         <div id="word-phase" class="hidden">
-            <button id="show-letters-btn-2" class="small-btn" style="position:absolute;top:10px;left:10px;">📄 أحرفي المجمعة</button>
+            <div id="letters-strip-word" class="letters-strip"></div>
             <div class="word-container">
                 <h2>مرحلة تشكيل الكلمات</h2>
                 <h3>كل كلمة تمنحك نقاطاً (طول الكلمة). من يحقق أعلى نقاط يفوز!</h3>
@@ -97,7 +98,9 @@
                     <input type="text" id="word-input" placeholder="ادخل كلمة" />
                     <div style="display:flex; gap:10px; margin-top:10px;">
                         <button id="form-word-btn" style="flex:1;">تشكيل كلمة</button>
-                        <button id="end-game-btn" class="hidden" style="flex:1; background: linear-gradient(135deg, #ff416c, #ff4b2b);">إنهاء اللعبة للكل 🏁</button>
+                        <button id="end-game-btn" class="hidden"
+                            style="flex:1; background: linear-gradient(135deg, #ff416c, #ff4b2b);">إنهاء اللعبة للكل
+                            🏁</button>
                     </div>
                 </div>
 

@@ -115,14 +115,14 @@ createBtn.addEventListener('click', async () => {
     alert('أدخل أسماء اللاعبين');
     return;
   }
-  
+
   const players = text.split(/[،,]/).map(s => s.trim()).filter(s => s);
   if (players.length < 2 || players.length > 10) {
     alert('العدد يجب أن يكون بين 2 و 10');
     return;
   }
   const initialMoney = parseInt(document.getElementById('initial-money-input').value) || 1000;
-  
+
   try {
     const res = await fetch('/api/game', {
       method: 'POST',
@@ -132,7 +132,7 @@ createBtn.addEventListener('click', async () => {
     const data = await res.json();
     sessionId = data.sessionId;
     playerName = players[0];
-    
+
     // Show session info
     sessionDisplay.textContent = sessionId.toString().padStart(4, '0');
     const moneyLimitDisplay = document.getElementById('money-limit-display');
@@ -140,7 +140,7 @@ createBtn.addEventListener('click', async () => {
     setupCreateDiv.classList.add('hidden');
     mainMenu.classList.add('hidden');
     gameCreated.classList.remove('hidden');
-    
+
     socket.emit('join', { sessionId, playerName });
   } catch (err) {
     console.error(err);
@@ -152,18 +152,18 @@ createBtn.addEventListener('click', async () => {
 joinBtn.addEventListener('click', () => {
   const sessionId_ = sessionInput.value.trim();
   const name = playerNameInput.value.trim();
-  
+
   if (!sessionId_ || !name) {
     alert('أدخل رقم الجلسة واسمك');
     return;
   }
-  
+
   sessionId = sessionId_.includes('MESSI') ? sessionId_ : parseInt(sessionId_);
   playerName = name;
-  
+
   mainMenu.classList.add('hidden');
   setupDiv.classList.add('hidden');
-  
+
   socket.emit('join', { sessionId, playerName });
   showAuctionInterface();
 });
@@ -210,7 +210,7 @@ socket.on('auctionStarted', (data) => {
 socket.on('bidPlaced', (data) => {
   currentPriceDiv.textContent = data.amount + ' د.ع';
   highestBidderDiv.textContent = `الأعلى: ${data.player} - ${data.amount} د.ع`;
-  
+
   const log = auctionLogDiv.innerHTML;
   auctionLogDiv.innerHTML = log + `<p>📢 ${data.player} رفع السعر إلى ${data.amount} د.ع</p>`;
 });
@@ -221,7 +221,7 @@ socket.on('auctionEnded', async (data) => {
   auctionTimerDiv.textContent = '';
 
   auctionLogDiv.innerHTML += `<p style="color: #0f0;">✓ انتهت المزادة! الحرف '${data.letter}' ذهب إلى ${data.winner} بـ ${data.price}</p>`;
-  
+
   if (data.winner === playerName) {
     playerLetters.push(data.letter);
     saveMyLetters();
@@ -229,9 +229,7 @@ socket.on('auctionEnded', async (data) => {
   }
 
   const limit = data.totalRounds || 10;
-  if (data.auctionCount >= limit) {
-    startWordPhase();
-  } else {
+  if (data.auctionCount < limit) {
     // show start button again if owner
     if (isOwner && startAuctionBtn) {
       startAuctionBtn.classList.remove('hidden');
@@ -263,7 +261,8 @@ socket.on('gameState', (data) => {
 
 socket.on('startWordPhase', () => {
   // Redirect to the separate word collection page
-  window.location.href = `letters.html?sessionId=${sessionId}&playerName=${playerName}`;
+  const url = `letters.html?sessionId=${sessionId}&playerName=${playerName}`;
+  window.location.href = url;
 });
 
 socket.on('wordFormed', (data) => {
@@ -272,7 +271,7 @@ socket.on('wordFormed', (data) => {
     msg += ` (+${data.points} نقطة)`;
   }
   wordsLogDiv.innerHTML += `<p>${msg}</p>`;
-  
+
   if (data.player === playerName) {
     playerWords.push(data.word);
     if (data.newScore !== undefined) {
@@ -341,19 +340,7 @@ if (startAuctionBtn) {
   });
 }
 
-// show letters page buttons
-const showLettersBtn = document.getElementById('show-letters-btn');
-const showLettersBtn2 = document.getElementById('show-letters-btn-2');
-if (showLettersBtn) {
-  showLettersBtn.addEventListener('click', () => {
-    window.open('letters.html', '_blank');
-  });
-}
-if (showLettersBtn2) {
-  showLettersBtn2.addEventListener('click', () => {
-    window.open('letters.html', '_blank');
-  });
-}
+// show letters page buttons removed
 
 function updatePlayersDisplay() {
   playersListDiv.innerHTML = '';
@@ -367,6 +354,13 @@ function updatePlayersDisplay() {
 }
 
 function updatePlayerStatus() {
+  const lettersHtml = playerLetters.map(char => `<span class="strip-letter">${char}</span>`).join('');
+  const stripAuction = document.getElementById('letters-strip-auction');
+  const stripWord = document.getElementById('letters-strip-word');
+
+  if (stripAuction) stripAuction.innerHTML = lettersHtml;
+  if (stripWord) stripWord.innerHTML = lettersHtml;
+
   playerStatusDiv.innerHTML = `
     <div class="status-box">
       <h3>${playerName}</h3>
@@ -374,7 +368,7 @@ function updatePlayerStatus() {
       <p>الحروف المتبقية: <strong>${playerLetters.join('')}</strong></p>
     </div>
   `;
-  
+
   myWordsDiv.innerHTML = playerWords.map(w => `<span class="word-chip">${w}</span>`).join('');
 }
 
