@@ -30,6 +30,13 @@ app.get('/api/leaderboard/:sessionId', async (req, res) => {
   try {
     const { sessionId } = req.params;
     const players = await db.getSessionPlayers(sessionId);
+    const words = await db.getSessionWords(sessionId);
+
+    // Attach words to each player
+    players.forEach(p => {
+      p.words = words.filter(w => w.player === p.name).map(w => w.word);
+    });
+
     // Sort players by score descending
     players.sort((a, b) => (b.score || 0) - (a.score || 0));
     res.json({ players });

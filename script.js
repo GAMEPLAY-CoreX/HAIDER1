@@ -262,13 +262,8 @@ socket.on('gameState', (data) => {
 });
 
 socket.on('startWordPhase', () => {
-  if (startAuctionBtn) startAuctionBtn.classList.add('hidden');
-  auctionPhaseDiv.classList.add('hidden');
-  wordPhaseDiv.classList.remove('hidden');
-  updatePlayerStatus();
-  if (isOwner && endGameBtn) {
-    endGameBtn.classList.remove('hidden');
-  }
+  // Redirect to the separate word collection page
+  window.location.href = `letters.html?sessionId=${sessionId}&playerName=${playerName}`;
 });
 
 socket.on('wordFormed', (data) => {
@@ -384,9 +379,7 @@ function updatePlayerStatus() {
 }
 
 function startWordPhase() {
-  auctionPhaseDiv.classList.add('hidden');
-  wordPhaseDiv.classList.remove('hidden');
   socket.emit('startWordPhase', { sessionId });
-  updatePlayerStatus();
+  window.location.href = `letters.html?sessionId=${sessionId}&playerName=${playerName}`;
 }
 

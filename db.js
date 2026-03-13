@@ -26,9 +26,9 @@ db.serialize(() => {
     )
   `);
   // ensure columns exist for older databases (safe ALTERs; ignore errors)
-  db.run(`ALTER TABLE players ADD COLUMN money INTEGER DEFAULT 1000`, err => {});
-  db.run(`ALTER TABLE players ADD COLUMN words_count INTEGER DEFAULT 0`, err => {});
-  db.run(`ALTER TABLE players ADD COLUMN score INTEGER DEFAULT 0`, err => {});
+  db.run(`ALTER TABLE players ADD COLUMN money INTEGER DEFAULT 1000`, err => { });
+  db.run(`ALTER TABLE players ADD COLUMN words_count INTEGER DEFAULT 0`, err => { });
+  db.run(`ALTER TABLE players ADD COLUMN score INTEGER DEFAULT 0`, err => { });
   db.run(`
     CREATE TABLE IF NOT EXISTS auctions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,7 +64,7 @@ db.serialize(() => {
 
 function createSession(playerNames, initialMoney = 1000) {
   return new Promise((resolve, reject) => {
-    db.run(`INSERT INTO sessions DEFAULT VALUES`, function(err) {
+    db.run(`INSERT INTO sessions DEFAULT VALUES`, function (err) {
       if (err) return reject(err);
       const sessionId = this.lastID;
       const stmt = db.prepare(`INSERT INTO players (session_id, name, money) VALUES (?, ?, ?)`);
@@ -95,7 +95,7 @@ function updatePlayerMoney(sessionId, player, amount) {
     db.run(
       `UPDATE players SET money = money + ? WHERE session_id = ? AND name = ?`,
       [amount, sessionId, player],
-      function(err) {
+      function (err) {
         if (err) return reject(err);
         resolve(this.lastID);
       }
@@ -108,7 +108,7 @@ function recordAuction(sessionId, letter, finalPrice, winner) {
     db.run(
       `INSERT INTO auctions (session_id, letter, final_price, winner) VALUES (?, ?, ?, ?)`,
       [sessionId, letter, finalPrice, winner],
-      function(err) {
+      function (err) {
         if (err) return reject(err);
         resolve(this.lastID);
       }
@@ -121,7 +121,7 @@ function addLetterToPlayer(sessionId, player, letter) {
     db.run(
       `INSERT INTO player_letters (session_id, player, letter) VALUES (?, ?, ?)`,
       [sessionId, player, letter],
-      function(err) {
+      function (err) {
         if (err) return reject(err);
         resolve(this.lastID);
       }
@@ -147,14 +147,14 @@ function formWord(sessionId, player, word) {
     db.run(
       `INSERT INTO formed_words (session_id, player, word) VALUES (?, ?, ?)`,
       [sessionId, player, word],
-      function(err) {
+      function (err) {
         if (err) return reject(err);
-        
+
         // Increment word count
         db.run(
           `UPDATE players SET words_count = words_count + 1 WHERE session_id = ? AND name = ?`,
           [sessionId, player],
-          function(err2) {
+          function (err2) {
             if (err2) return reject(err2);
             resolve(this.lastID);
           }
@@ -182,7 +182,7 @@ function updatePlayerScore(sessionId, player, amount) {
     db.run(
       `UPDATE players SET score = score + ? WHERE session_id = ? AND name = ?`,
       [amount, sessionId, player],
-      function(err) {
+      function (err) {
         if (err) return reject(err);
         resolve(this.lastID);
       }
@@ -247,6 +247,20 @@ function getResults(sessionId) {
     );
   });
 }
+
+function getSessionWords(sessionId) {
+  return new Promise((resolve, reject) => {
+    db.all(
+      `SELECT player, word FROM formed_words WHERE session_id = ? ORDER BY timestamp ASC`,
+      [sessionId],
+      (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
+      }
+    );
+  });
+}
+
 module.exports = {
   createSession,
   getSessionPlayers,
@@ -260,5 +274,6 @@ module.exports = {
   getPlayerScore,
   consumeLetters,
   getLetterCounts,
-  getResults
+  getResults,
+  getSessionWords
 };

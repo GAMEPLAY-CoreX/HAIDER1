@@ -4,66 +4,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الأحرف المجمعة</title>
+    <title>تجميع الكلمات - مـزاد الأحـرف</title>
     <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        .word-phase-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .letters-bank {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .formed-words-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>📄 الأحرف التي حصلت عليها</h1>
-        <div id="letters-list" class="letters-display"></div>
-        <div class="stats" style="text-align: center; margin: 15px 0; color: #888;">
-            عدد الأحرف: <span id="letter-count" style="color: #0ff; font-weight: bold;">0</span>
+        <div class="word-phase-container">
+            <h1>✍️ مرحلة تشكيل الكلمات ✍️</h1>
+            <p>استخدم الأحرف التي جمعتها في المزاد لتكوين كلمات. كل حرف في الكلمة يمنحك نقطة واحدة.</p>
+
+            <div id="player-info" style="margin: 10px 0; color: #ffd700; font-weight: bold;">
+                اللاعب: <span id="display-name">---</span> | النقاط: <span id="display-score">0</span>
+            </div>
+
+            <h3>🏦 أحرفك المتاحة:</h3>
+            <div id="letters-list" class="letters-bank"></div>
+
+            <div class="word-input-section">
+                <input type="text" id="word-input" placeholder="اكتب كلمة هنا..." style="width: 70%;" />
+                <button id="form-word-btn" class="big-btn" style="margin-top: 10px;">✨ تشكيل الكلمة</button>
+            </div>
+
+            <h3>📊 كلماتك المشكلة:</h3>
+            <div id="my-words" class="formed-words-list"></div>
+
+            <div id="words-log"
+                style="text-align: right; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; height: 100px; overflow-y: auto; margin-top: 20px; font-size: 0.9rem;">
+                <p>سجل النشاط سيظهر هنا...</p>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button id="finish-game-btn" class="big-btn"
+                    style="background: linear-gradient(135deg, #ff416c, #ff4b2b);">🏁 إنهاء اللعبة ورؤية
+                    النتائج</button>
+            </div>
         </div>
-        <button id="clear-btn">🗑️ مسح الأحرف</button>
-        <button id="back-home">↩️ العودة للعبة</button>
     </div>
 
     <script>
-        function renderLetters() {
-            const lettersDiv = document.getElementById('letters-list');
-            const countSpan = document.getElementById('letter-count');
-            const stored = localStorage.getItem('myLetters') || '';
+        const socket = io();
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('sessionId');
+        const playerName = urlParams.get('playerName');
 
-            if (!stored) {
-                lettersDiv.innerHTML = '<p style="font-size: 1.2rem; color: #555;">لم يتم جمع أي أحرف بعد.</p>';
-                countSpan.textContent = '0';
-                return;
+        if (!sessionId || !playerName) {
+            alert('خطأ: معلومات الجلسة ناقصة.');
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('display-name').textContent = playerName;
+
+        // Join room
+        socket.emit('join', { sessionId, playerName });
+
+        const lettersListDiv = document.getElementById('letters-list');
+        const myWordsDiv = document.getElementById('my-words');
+        const wordsLogDiv = document.getElementById('words-log');
+        const scoreSpan = document.getElementById('display-score');
+        const wordInput = document.getElementById('word-input');
+        const formWordBtn = document.getElementById('form-word-btn');
+        const finishBtn = document.getElementById('finish-game-btn');
+
+        socket.on('gameState', (data) => {
+            if (data.playerLetters) {
+                renderLetters(data.playerLetters);
             }
+            if (data.playerScore !== undefined) {
+                scoreSpan.textContent = data.playerScore;
+            }
+        });
 
-            lettersDiv.innerHTML = '';
-            const letters = stored.split('');
-            letters.forEach((char, index) => {
+        socket.on('wordFormed', (data) => {
+            const msg = `<p>✓ ${data.player === playerName ? 'أنت' : data.player} شكل كلمة: <strong>${data.word}</strong> (+${data.points})</p>`;
+            wordsLogDiv.innerHTML = msg + wordsLogDiv.innerHTML;
+
+            if (data.player === playerName) {
+                const chip = document.createElement('span');
+                chip.className = 'word-chip';
+                chip.textContent = data.word;
+                myWordsDiv.appendChild(chip);
+
+                if (data.newScore !== undefined) {
+                    scoreSpan.textContent = data.newScore;
+                }
+                if (data.remainingLetters) {
+                    renderLetters(data.remainingLetters);
+                }
+            }
+        });
+
+        socket.on('gameOver', () => {
+            window.location.href = `leaderboar.html?sessionId=${sessionId}`;
+        });
+
+        socket.on('error', (msg) => {
+            alert(msg);
+        });
+
+        function renderLetters(letters) {
+            lettersListDiv.innerHTML = '';
+            letters.forEach(char => {
                 const chip = document.createElement('span');
                 chip.className = 'word-chip';
                 chip.textContent = char;
-                chip.style.animationDelay = `${index * 0.05}s`;
-                lettersDiv.appendChild(chip);
+                lettersListDiv.appendChild(chip);
             });
-
-            countSpan.textContent = letters.length;
         }
 
-        // Listen for changes in localStorage from other tabs (the game tab)
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'myLetters') {
-                renderLetters();
-                // Optional: Add a subtle sound or visual notification
+        formWordBtn.addEventListener('click', () => {
+            const word = wordInput.value.trim();
+            if (!word) return;
+            socket.emit('formWord', { sessionId, playerName, word });
+            wordInput.value = '';
+        });
+
+        finishBtn.addEventListener('click', () => {
+            if (confirm('هل أنت متأكد من إنهاء اللعبة للجميع ورؤية النتائج النهائية؟')) {
+                socket.emit('endGameRequest', { sessionId });
             }
         });
-
-        document.getElementById('clear-btn').addEventListener('click', () => {
-            if (confirm('هل تريد مسح الأحرف من التخزين المحلي؟')) {
-                localStorage.removeItem('myLetters');
-                renderLetters();
-            }
-        });
-
-        document.getElementById('back-home').addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
-
-        renderLetters();
     </script>
 </body>
 

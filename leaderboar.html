@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,8 +36,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
@@ -62,9 +70,17 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.2); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 215, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, 0);
+            }
         }
 
         .winner-name {
@@ -150,12 +166,13 @@
         }
     </style>
 </head>
+
 <body>
     <div id="stars"></div>
 
     <div class="leaderboard-container">
         <h1>🏆 النتائج النهائية 🏆</h1>
-        
+
         <div id="winner-display" class="winner-card" style="display: none;">
             <span class="winner-label">🏆 المركز الأول 🏆</span>
             <span id="top-player-name" class="winner-name">---</span>
@@ -167,6 +184,7 @@
                 <tr>
                     <th>الترتيب</th>
                     <th style="text-align: right;">اللاعب</th>
+                    <th>الكلمات المشكلة</th>
                     <th>النقاط</th>
                 </tr>
             </thead>
@@ -203,6 +221,20 @@
                 0%, 100% { opacity: 0.3; }
                 50% { opacity: 1; }
             }
+            .word-cell {
+                font-size: 0.85rem;
+                color: #aaa;
+                max-width: 200px;
+                word-wrap: break-word;
+            }
+            .word-tag {
+                display: inline-block;
+                background: rgba(255, 255, 255, 0.1);
+                padding: 2px 8px;
+                border-radius: 10px;
+                margin: 2px;
+                color: #0ff;
+            }
         `;
         document.head.appendChild(style);
         createStars();
@@ -220,10 +252,10 @@
             try {
                 const response = await fetch(`/api/leaderboard/${sessionId}`);
                 const data = await response.json();
-                
+
                 if (data.players && data.players.length > 0) {
                     const players = data.players;
-                    
+
                     // Show top winner
                     const topPlayer = players[0];
                     document.getElementById('winner-display').style.display = 'block';
@@ -233,18 +265,20 @@
                     // Fill table
                     const tbody = document.getElementById('leaderboard-body');
                     tbody.innerHTML = '';
-                    
+
                     players.forEach((player, index) => {
+                        const wordsHtml = (player.words || []).map(w => `<span class="word-tag">${w}</span>`).join(' ');
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td class="rank">${index + 1}</td>
                             <td class="player-name">${player.name}</td>
+                            <td class="word-cell">${wordsHtml || '---'}</td>
                             <td class="score">${player.score || 0}</td>
                         `;
                         tbody.appendChild(row);
                     });
                 } else {
-                     document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="3">لا توجد بيانات متاحة</td></tr>';
+                    document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="3">لا توجد بيانات متاحة</td></tr>';
                 }
             } catch (error) {
                 console.error('Error fetching leaderboard:', error);
@@ -255,4 +289,5 @@
         loadLeaderboard();
     </script>
 </body>
+
 </html>
